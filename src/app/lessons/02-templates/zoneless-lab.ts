@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, signal, computed, DestroyRef, inject } from '@angular/core';
 
-import { SEED_STUDENTS } from '../01-basics/student.model';
+import { Level, SEED_STUDENTS, Student } from '../01-basics/student.model';
 
+type LevelOrAll = Level | 'all';
 /*
  * MODULE 2: signals in templates, zoneless change detection, control flow
  *
@@ -53,10 +54,90 @@ import { SEED_STUDENTS } from '../01-basics/student.model';
   selector: 'app-zoneless-lab',
   template: `
     <h1>Moduł 2: szablon i zoneless</h1>
-    <p class="hint">Uzupełnij klasę i szablon wg komentarza w pliku.</p>
+    <button (click)="onClick()">Click me</button>
+    <p>{{ plainTicks }}</p>
+    <p>{{ signalTicks() }}</p>
+    <p>{{ plainClicks }}</p>
+    <div style="display: flex; flex-direction: row; gap: 1rem; align-items: center;">
+      <select name="levels" id="levels" [value]="level()" (change)="onLevelChange($event)">
+        @for (level of levels; track level) {
+          <option value="{{ level }}">{{ level }}</option>
+        }
+      </select>
+      <label for="onlyActive"
+        ><input
+          id="onlyActive"
+          type="checkbox"
+          [checked]="onlyActive()"
+          (change)="onlyActive.update((v) => !v)"
+        />Tylko aktywni</label
+      >
+    </div>
+    @let count = filtered().length;
+    <p>Widocznych: {{ count }}</p>
+    @for (student of filtered(); track student.id) {
+      <p [class.first]="$first">
+        {{ $index + 1 }} {{ student.name }} {{ student.subject }}
+        {{ student.levelLabel }}
+        {{ student.active ? 'aktywny' : 'nieaktywny' }}
+      </p>
+    } @empty {
+      <p>Brak uczniów dla tych filtrów</p>
+    }
   `,
 })
 export class ZonelessLab {
-  // Remove once you use SEED_STUDENTS in Step 4.
-  protected readonly seedCount = SEED_STUDENTS.length;
+  protected readonly students = signal<readonly Student[]>(SEED_STUDENTS);
+  protected readonly level = signal<LevelOrAll>('all');
+  protected readonly levels: readonly LevelOrAll[] = ['all', 'podstawowa', 'liceum', 'matura'];
+  protected readonly onlyActive = signal(false);
+
+  private readonly destroyRef = inject(DestroyRef);
+
+  protected plainTicks = 0;
+  protected plainClicks = 0;
+
+  protected readonly signalTicks = signal(0);
+
+  protected readonly filtered = computed(() => {
+    const level = this.level();
+    const onlyActive = this.onlyActive();
+
+    return this.students()
+      .filter((s) => (level === 'all' || s.level === level) && (!onlyActive || s.active))
+      .map((student) => ({
+        ...student,
+        levelLabel: this.toLevelLabel(student.level),
+      }));
+  });
+
+  constructor() {
+    const interval = setInterval(() => {
+      this.plainTicks = this.plainTicks + 1;
+      this.signalTicks.update((value) => value + 1);
+      console.log('tick');
+    }, 1000);
+    this.destroyRef.onDestroy(() => clearInterval(interval));
+  }
+
+  onClick(): void {
+    this.plainClicks = this.plainClicks + 1;
+  }
+
+  protected onLevelChange($event: Event): void {
+    const level = ($event.target as HTMLSelectElement).value;
+    this.level.set(level as LevelOrAll);
+  }
+
+  protected toLevelLabel(level: Level): string {
+    console.log('levelLabel', level);
+    switch (level) {
+      case 'podstawowa':
+        return 'SP';
+      case 'liceum':
+        return 'LO';
+      case 'matura':
+        return 'Matura';
+    }
+  }
 }

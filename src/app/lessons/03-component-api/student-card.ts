@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { booleanAttribute, Component, computed, input, output } from '@angular/core';
+import { Student } from '../01-basics/student.model';
 
 /*
  * MODULE 3, component 1 of 2: StudentCard (child)
@@ -28,6 +29,36 @@ import { Component } from '@angular/core';
  */
 @Component({
   selector: 'app-student-card',
-  template: `<p class="hint">StudentCard: do uzupełnienia</p>`,
+  template: ` <p class="hint">
+    @if (compact()) {
+      {{ initials() }} {{ student().name }} {{ status() }}
+    } @else {
+      <strong>{{ student().name }}</strong> {{ studentInfo() }}
+      <button (click)="toggleActive()">{{ status() }}</button>
+    }
+  </p>`,
 })
-export class StudentCard {}
+export class StudentCard {
+  // Inputs, outputs and models are public: they are the contract with the parent.
+  readonly student = input.required<Student>();
+  readonly compact = input(false, { transform: booleanAttribute });
+  readonly toggleActiveClick = output<number>();
+
+  protected readonly initials = computed(() =>
+    this.student()
+      .name.split(' ')
+      .map((name) => name[0])
+      .join(''),
+  );
+
+  protected readonly studentInfo = computed(() => {
+    return this.student().subject + ' ' + this.student().level;
+  });
+
+  // The card never changes the student: it reports the intent and the parent owns the state.
+  protected toggleActive(): void {
+    this.toggleActiveClick.emit(this.student().id);
+  }
+
+  protected readonly status = computed(() => (this.student().active ? 'aktywny' : 'nieaktywny'));
+}

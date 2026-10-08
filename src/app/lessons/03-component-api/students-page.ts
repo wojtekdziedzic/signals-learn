@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 
-import { SEED_STUDENTS } from '../01-basics/student.model';
+import { SEED_STUDENTS, Student } from '../01-basics/student.model';
+import { StudentCard } from './student-card';
+import { SearchBox } from './search-box';
+// import { FormsModule } from '@angular/forms';
 
 /*
  * MODULE 3: input(), input.required, transform, output(), model()
@@ -29,10 +32,36 @@ import { SEED_STUDENTS } from '../01-basics/student.model';
   selector: 'app-students-page',
   template: `
     <h1>Moduł 3: input, output, model</h1>
-    <p class="hint">Zacznij od student-card.ts, potem search-box.ts, na końcu ten plik.</p>
+    <p>
+      Widok kompaktowy:
+      <input type="checkbox" [checked]="compact()" (change)="compact.update((v) => !v)" />
+    </p>
+    <app-search-box [(query)]="query" />
+    @for (student of filteredStudents(); track student.id) {
+      <app-student-card
+        [compact]="compact()"
+        [student]="student"
+        (toggleActiveClick)="toggleActiveClick($event)"
+      />
+    }
   `,
+  imports: [StudentCard, SearchBox],
 })
 export class StudentsPage {
-  // Remove once you use SEED_STUDENTS in Step 5.
-  protected readonly seedCount = SEED_STUDENTS.length;
+  protected readonly students = signal<readonly Student[]>(SEED_STUDENTS);
+  protected query = signal('');
+  protected readonly compact = signal(false);
+
+  protected readonly filteredStudents = computed(() => {
+    const query = this.query().toLowerCase();
+    return this.students().filter((student) => student.name.toLowerCase().includes(query));
+  });
+
+  toggleActiveClick(id: number): void {
+    this.students.update((students) =>
+      students.map((student) =>
+        student.id === id ? { ...student, active: !student.active } : student,
+      ),
+    );
+  }
 }

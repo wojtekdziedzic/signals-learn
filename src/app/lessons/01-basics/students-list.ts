@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 
 import { SEED_STUDENTS, Student } from './student.model';
 
@@ -38,10 +38,58 @@ import { SEED_STUDENTS, Student } from './student.model';
   selector: 'app-students-list',
   template: `
     <h1>Moduł 1: signal i computed</h1>
-    <p class="hint">Uzupełnij klasę i szablon wg komentarza w pliku.</p>
+    <input #searchInput type="text" [value]="query()" (input)="query.set(searchInput.value)" />
+
+    <h2>Wyniki: {{ filtered().length }}, aktywnych: {{ activeCount() }}</h2>
+
+    @for (student of filtered(); track student.id) {
+      <p>
+        {{ student.name }} {{ student.subject }} {{ student.level }}
+        {{ student.active ? 'aktywny' : 'nieaktywny' }}
+      </p>
+      <button (click)="switchActivity(student.id)">Przełącz aktywność</button>
+    }
+
+    <button (click)="addStudent()">Dodaj ucznia</button>
   `,
 })
 export class StudentsList {
-  // Keep the import alive until you use it in Step 1.
-  protected readonly seed: readonly Student[] = SEED_STUDENTS;
+  protected readonly students = signal<readonly Student[]>(SEED_STUDENTS);
+  protected readonly query = signal('');
+
+  protected readonly filtered = computed(() => {
+    const query = this.query().trim().toLowerCase();
+    return this.students().filter((student) => {
+      const name = student.name.toLowerCase();
+      const subject = student.subject.toLowerCase();
+      return name.includes(query) || subject.includes(query);
+    });
+  });
+
+  protected readonly activeCount = computed(
+    () => this.filtered().filter((student) => student.active).length,
+  );
+
+  protected switchActivity(id: number): void {
+    this.students.update((studentsList) =>
+      studentsList.map((student) =>
+        student.id === id ? { ...student, active: !student.active } : student,
+      ),
+    );
+  }
+
+  protected addStudent(): void {
+    this.students.update((studentsList) => [
+      ...studentsList,
+      {
+        // Never derive an id from the array length: after a removal it repeats
+        // an existing id and breaks `track student.id`.
+        id: Math.max(0, ...studentsList.map((student) => student.id)) + 1,
+        name: 'Nowy uczeń',
+        subject: 'Nowy przedmiot',
+        level: 'matura',
+        active: true,
+      },
+    ]);
+  }
 }

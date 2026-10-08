@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, model } from '@angular/core';
 
 /*
  * MODULE 3, component 2 of 2: SearchBox (two-way binding with model)
@@ -10,6 +10,12 @@ import { Component } from '@angular/core';
  */
 @Component({
   selector: 'app-search-box',
-  template: `<p class="hint">SearchBox: do uzupełnienia</p>`,
+  template: `<input #box [value]="query()" (input)="query.set(box.value)" /> &nbsp;
+    <button (click)="resetQuery()">Wyczyść</button>`,
 })
-export class SearchBox {}
+export class SearchBox {
+  readonly query = model('');
+  protected resetQuery(): void {
+    this.query.set('');
+  }
+}
