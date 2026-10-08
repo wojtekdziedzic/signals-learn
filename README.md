@@ -56,8 +56,9 @@ oraz w `public/data/` dla modułów o ładowaniu danych.
 
 ## Rozwiązania
 
-Na gałęzi [`solutions`](../../tree/solutions) leżą przykładowe rozwiązania wcześniejszych
-modułów. Zaglądaj tam dopiero po własnej próbie: w tym materiale najwięcej daje różnica
+Na gałęzi [`solutions`](../../tree/solutions) leżą przykładowe rozwiązania. Dochodzą
+moduł po module, a aktualny stan opisuje tabela w `SOLUTIONS.md` na tej gałęzi.
+Zaglądaj tam dopiero po własnej próbie: w tym materiale najwięcej daje różnica
 między tym, co przewidziałeś, a tym, co faktycznie zrobił Angular.
 
 ```bash
