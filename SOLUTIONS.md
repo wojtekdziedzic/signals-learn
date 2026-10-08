@@ -3,12 +3,15 @@
 Ta gałąź zawiera przykładowe rozwiązania modułów, które są już przerobione.
 Gałąź `master` zostaje czysta: tam są same zadania.
 
+Docelowo będą tu rozwiązania wszystkich dziesięciu modułów. Dochodzą po kolei,
+moduł po module, więc poniższa tabela mówi, co jest gotowe w tej chwili.
+
 | Moduł | Stan |
 |---|---|
 | 1. signal i computed | rozwiązany |
 | 2. szablon i zoneless | rozwiązany (część A opisana w komentarzach, kod końcowy to część B) |
 | 3. input, output, model | rozwiązany, z testami w `student-card.spec.ts` |
-| 4-10 | puste pliki startowe, jak na `master` |
+| 4-10 | jeszcze nie, na razie pliki startowe jak na `master` |
 
 To jedno z możliwych rozwiązań, nie wzorzec jedynie słuszny. Jeśli Twoje różni się
 strukturą, ale zachowuje te same reguły (stan tylko w sygnałach, wartości pochodne
