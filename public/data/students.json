@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "Uczeń A", "subject": "matematyka", "level": "matura", "active": true },
+  { "id": 2, "name": "Uczeń B", "subject": "fizyka", "level": "liceum", "active": true },
+  { "id": 3, "name": "Uczeń C", "subject": "matematyka", "level": "podstawowa", "active": false },
+  { "id": 4, "name": "Uczeń D", "subject": "angielski", "level": "matura", "active": true },
+  { "id": 5, "name": "Uczeń E", "subject": "matematyka", "level": "liceum", "active": true },
+  { "id": 6, "name": "Uczeń F", "subject": "chemia", "level": "matura", "active": false }
+]
