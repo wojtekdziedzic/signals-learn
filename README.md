@@ -54,6 +54,16 @@ Moduły 1-9 najlepiej robić po kolei, bo późniejsze korzystają z wcześniejs
 Dane do ćwiczeń (lista uczniów) są w `src/app/lessons/01-basics/student.model.ts`
 oraz w `public/data/` dla modułów o ładowaniu danych.
 
+## Rozwiązania
+
+Na gałęzi [`solutions`](../../tree/solutions) leżą przykładowe rozwiązania wcześniejszych
+modułów. Zaglądaj tam dopiero po własnej próbie: w tym materiale najwięcej daje różnica
+między tym, co przewidziałeś, a tym, co faktycznie zrobił Angular.
+
+```bash
+git switch solutions
+```
+
 ## Stack
 
 Angular 22 (zoneless, standalone, lazy routes), TypeScript, Vitest, pnpm.
